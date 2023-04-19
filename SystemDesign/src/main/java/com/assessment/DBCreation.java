@@ -20,7 +20,7 @@ public class DBCreation {
             logger.debug("Creating database if not exist...");
             connection = DriverManager.getConnection("jdbc:postgresql://host.docker.internal:5432/", "hazem", "password");
             statement = connection.createStatement();
-            statement.executeQuery("SELECT count(*) FROM pg_database WHERE datname = '"+dBName+"'");
+            statement.executeQuery("SELECT count(*) FROM pg_database WHERE datname = '" + dBName + "'");
             ResultSet resultSet = statement.getResultSet();
             resultSet.next();
             int count = resultSet.getInt(1);
@@ -28,12 +28,6 @@ public class DBCreation {
             if (count <= 0) {
                 statement.executeUpdate("CREATE DATABASE " + dBName);
                 logger.debug("Database created.");
-                statement.execute("insert into permission_groups values(1,'admin')");
-                statement.execute("insert into permission_groups values(2,'notAdmin')");
-                statement.execute("insert into permission values(1,0,'edit@mail.com',1)");
-                statement.execute("insert into permission values(2,1,'view@mail.com',1)");
-                statement.execute("insert into permission values(3,1,'notAdmin@mail.com',2)");
-                logger.debug("basic data inserted.");
             } else {
                 logger.debug("Database already exist.");
             }
