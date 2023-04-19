@@ -1,0 +1,41 @@
+version: "3.9"
+services:
+  postgres:
+    container_name: postgres
+    image: postgres
+    environment:
+      POSTGRES_USER: hazem
+      POSTGRES_PASSWORD: password
+      PDATA: /data/postgres
+    #    volumes:
+    #      - postgres:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U hazem" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+  web:
+    build: .
+    ports:
+      - "8000:8080"
+    networks:
+      - postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://myuser:mypassword@db:5432/
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
+
+networks:
+  postgres:
+    driver: bridge
+
